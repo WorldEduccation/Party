@@ -226,6 +226,11 @@ export class MemStorage implements IStorage {
     const video: Video = {
       ...videoData,
       id: this.currentVideoId++,
+      description: videoData.description || null,
+      thumbnailUrl: videoData.thumbnailUrl || null,
+      country: videoData.country || null,
+      eventType: videoData.eventType || null,
+      hashtags: videoData.hashtags || null,
       likes: 0,
       views: 0,
       telegramClicks: 0,
@@ -243,6 +248,11 @@ export class MemStorage implements IStorage {
     const updatedVideo: Video = {
       ...video,
       ...updates,
+      description: updates.description !== undefined ? updates.description : video.description,
+      thumbnailUrl: updates.thumbnailUrl !== undefined ? updates.thumbnailUrl : video.thumbnailUrl,
+      country: updates.country !== undefined ? updates.country : video.country,
+      eventType: updates.eventType !== undefined ? updates.eventType : video.eventType,
+      hashtags: updates.hashtags !== undefined ? updates.hashtags : video.hashtags,
       updatedAt: new Date(),
     };
     this.videos.set(id, updatedVideo);
