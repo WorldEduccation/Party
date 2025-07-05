@@ -58,6 +58,105 @@ export class MemStorage implements IStorage {
   private currentVideoId = 1;
   private currentCommentId = 1;
 
+  constructor() {
+    // Add sample data
+    this.initializeSampleData();
+  }
+
+  private initializeSampleData() {
+    // Sample videos for demonstration
+    const sampleVideos = [
+      {
+        userId: "firebase-user",
+        title: "Miami Beach Party 2025 🔥",
+        description: "The hottest beach party in Miami! Join us for an unforgettable night of music, dancing, and vibes.",
+        videoUrl: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
+        thumbnailUrl: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=600&fit=crop",
+        telegramLink: "https://t.me/miamipartyvip",
+        country: "USA",
+        eventType: "Beach Party",
+        hashtags: ["miami", "beach", "party", "nightlife", "dance"],
+        likes: 127,
+        views: 1250,
+        telegramClicks: 85,
+      },
+      {
+        userId: "firebase-user",
+        title: "Berlin Underground Rave ⚡",
+        description: "Deep techno vibes in Berlin's underground scene. Experience the real nightlife culture.",
+        videoUrl: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_2mb.mp4",
+        thumbnailUrl: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=600&fit=crop",
+        telegramLink: "https://t.me/berlinrave",
+        country: "Germany",
+        eventType: "Underground",
+        hashtags: ["berlin", "techno", "underground", "rave", "music"],
+        likes: 89,
+        views: 945,
+        telegramClicks: 62,
+      },
+      {
+        userId: "firebase-user",
+        title: "São Paulo Rooftop Vibes 🌃",
+        description: "Amazing city views while partying on São Paulo's best rooftop. Come enjoy the Brazilian energy!",
+        videoUrl: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_5mb.mp4",
+        thumbnailUrl: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=600&fit=crop",
+        telegramLink: "https://t.me/saopaulorooftop",
+        country: "Brazil",
+        eventType: "Rooftop",
+        hashtags: ["saopaulo", "rooftop", "brazil", "nightlife", "city"],
+        likes: 156,
+        views: 1687,
+        telegramClicks: 103,
+      },
+      {
+        userId: "firebase-user",
+        title: "London VIP Lounge Experience 💎",
+        description: "Exclusive VIP experience in London's most prestigious lounge. Limited access.",
+        videoUrl: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
+        thumbnailUrl: "https://images.unsplash.com/photo-1566737236500-c8ac43014a8e?w=400&h=600&fit=crop",
+        telegramLink: "https://t.me/londenvip",
+        country: "UK",
+        eventType: "VIP Lounge",
+        hashtags: ["london", "vip", "exclusive", "luxury", "nightlife"],
+        likes: 203,
+        views: 2134,
+        telegramClicks: 145,
+      },
+      {
+        userId: "firebase-user",
+        title: "Ibiza Festival Madness 🎪",
+        description: "The biggest festival of the summer in Ibiza! Three days of non-stop music and fun.",
+        videoUrl: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_2mb.mp4",
+        thumbnailUrl: "https://images.unsplash.com/photo-1493676304819-0d7a8d026dcf?w=400&h=600&fit=crop",
+        telegramLink: "https://t.me/ibizafestival",
+        country: "Spain",
+        eventType: "Festival",
+        hashtags: ["ibiza", "festival", "summer", "music", "spain"],
+        likes: 312,
+        views: 3245,
+        telegramClicks: 198,
+      },
+    ];
+
+    sampleVideos.forEach((videoData, index) => {
+      const video: Video = {
+        ...videoData,
+        id: this.currentVideoId++,
+        description: videoData.description || null,
+        thumbnailUrl: videoData.thumbnailUrl || null,
+        country: videoData.country || null,
+        eventType: videoData.eventType || null,
+        hashtags: videoData.hashtags || null,
+        likes: videoData.likes || 0,
+        views: videoData.views || 0,
+        telegramClicks: videoData.telegramClicks || 0,
+        createdAt: new Date(Date.now() - (index * 24 * 60 * 60 * 1000)), // Spread over last few days
+        updatedAt: new Date(),
+      };
+      this.videos.set(video.id, video);
+    });
+  }
+
   async getUser(id: string): Promise<User | undefined> {
     return this.users.get(id);
   }
@@ -65,6 +164,11 @@ export class MemStorage implements IStorage {
   async upsertUser(userData: UpsertUser): Promise<User> {
     const user: User = {
       ...userData,
+      email: userData.email || null,
+      firstName: userData.firstName || null,
+      lastName: userData.lastName || null,
+      profileImageUrl: userData.profileImageUrl || null,
+      telegramLink: userData.telegramLink || null,
       createdAt: this.users.get(userData.id)?.createdAt || new Date(),
       updatedAt: new Date(),
     };

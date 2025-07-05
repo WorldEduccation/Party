@@ -16,7 +16,7 @@ import type { Video } from "@shared/schema";
 
 export default function Home() {
   const { theme, toggleTheme } = useTheme();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<{
     country?: string;
@@ -44,6 +44,7 @@ export default function Home() {
   const { data: userLikes = [] } = useQuery({
     queryKey: ["/api/user/likes"],
     enabled: !!user,
+    retry: false,
   });
 
   const handleVideoPlay = (video: Video) => {
@@ -114,9 +115,9 @@ export default function Home() {
               {/* Profile */}
               <div className="flex items-center space-x-2">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-blue-500 flex items-center justify-center cursor-pointer hover:shadow-lg transition-all duration-300">
-                  {user?.profileImageUrl ? (
+                  {user?.photoURL ? (
                     <img
-                      src={user.profileImageUrl}
+                      src={user.photoURL}
                       alt="Profile"
                       className="w-full h-full rounded-full object-cover"
                     />
@@ -127,7 +128,7 @@ export default function Home() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => window.location.href = '/api/logout'}
+                  onClick={logout}
                   className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                 >
                   Logout
@@ -270,7 +271,7 @@ export default function Home() {
                   <VideoCard
                     key={video.id}
                     video={video}
-                    userLikes={userLikes}
+                    userLikes={(userLikes as number[]) || []}
                     onPlay={handleVideoPlay}
                   />
                 ))}

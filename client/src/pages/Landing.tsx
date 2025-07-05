@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Play, Users, Globe, TrendingUp } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Landing() {
+  const { login } = useAuth();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900">
       {/* Hero Section */}
@@ -35,7 +38,7 @@ export default function Landing() {
               <Button 
                 size="lg"
                 className="bg-gradient-to-r from-pink-500 to-blue-500 hover:from-pink-600 hover:to-blue-600 text-white px-8 py-4 text-lg"
-                onClick={() => window.location.href = '/api/login'}
+                onClick={login}
               >
                 <Play className="w-5 h-5 mr-2" />
                 Get Started
@@ -143,7 +146,7 @@ export default function Landing() {
           <Button 
             size="lg"
             className="bg-white text-pink-500 hover:bg-gray-100 px-8 py-4 text-lg font-semibold"
-            onClick={() => window.location.href = '/api/login'}
+            onClick={login}
           >
             Join PartyLink Now
           </Button>

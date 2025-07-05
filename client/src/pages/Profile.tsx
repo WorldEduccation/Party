@@ -10,16 +10,17 @@ import { User, Calendar, MapPin, ExternalLink, Video } from "lucide-react";
 import type { Video as VideoType } from "@shared/schema";
 
 export default function Profile() {
-  const { user } = useAuth();
+  const { user, login } = useAuth();
   
   const { data: userVideos, isLoading: videosLoading } = useQuery({
-    queryKey: ["/api/videos", { userId: user?.id }],
+    queryKey: ["/api/videos", { userId: user?.uid }],
     enabled: !!user,
   });
 
   const { data: userLikes = [] } = useQuery({
     queryKey: ["/api/user/likes"],
     enabled: !!user,
+    retry: false,
   });
 
   if (!user) {
@@ -29,7 +30,7 @@ export default function Profile() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             Please log in to view your profile
           </h1>
-          <Button onClick={() => window.location.href = '/api/login'}>
+          <Button onClick={login}>
             Log In
           </Button>
         </div>
@@ -46,9 +47,9 @@ export default function Profile() {
             <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
               {/* Profile Picture */}
               <div className="w-24 h-24 rounded-full bg-gradient-to-br from-pink-500 to-blue-500 flex items-center justify-center overflow-hidden">
-                {user.profileImageUrl ? (
+                {user.photoURL ? (
                   <img
-                    src={user.profileImageUrl}
+                    src={user.photoURL}
                     alt="Profile"
                     className="w-full h-full object-cover"
                   />
@@ -60,9 +61,7 @@ export default function Profile() {
               {/* Profile Info */}
               <div className="flex-1 text-center md:text-left">
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                  {user.firstName || user.lastName
-                    ? `${user.firstName || ""} ${user.lastName || ""}`.trim()
-                    : "Party Creator"}
+                  {user.displayName || "Party Creator"}
                 </h1>
                 
                 {user.email && (
@@ -74,19 +73,12 @@ export default function Profile() {
                 <div className="flex flex-wrap gap-2 justify-center md:justify-start mb-4">
                   <Badge variant="secondary" className="flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
-                    Joined {new Date(user.createdAt!).toLocaleDateString()}
+                    Joined {user.metadata.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString() : 'Recently'}
                   </Badge>
-                  
-                  {user.telegramLink && (
-                    <Badge variant="secondary" className="flex items-center gap-1">
-                      <ExternalLink className="w-3 h-3" />
-                      Telegram
-                    </Badge>
-                  )}
                   
                   <Badge variant="secondary" className="flex items-center gap-1">
                     <Video className="w-3 h-3" />
-                    {userVideos?.length || 0} Videos
+                    {Array.isArray(userVideos) ? userVideos.length : 0} Videos
                   </Badge>
                 </div>
                 
@@ -94,16 +86,6 @@ export default function Profile() {
                   <Button variant="outline">
                     Edit Profile
                   </Button>
-                  
-                  {user.telegramLink && (
-                    <Button 
-                      onClick={() => window.open(user.telegramLink, "_blank")}
-                      className="bg-gradient-to-r from-pink-500 to-blue-500 hover:from-pink-600 hover:to-blue-600 text-white"
-                    >
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      View Telegram
-                    </Button>
-                  )}
                 </div>
               </div>
             </div>
@@ -130,13 +112,13 @@ export default function Profile() {
                   <div key={i} className="aspect-[9/16] bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
                 ))}
               </div>
-            ) : userVideos && userVideos.length > 0 ? (
+            ) : userVideos && Array.isArray(userVideos) && userVideos.length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 {userVideos.map((video: VideoType) => (
                   <VideoCard
                     key={video.id}
                     video={video}
-                    userLikes={userLikes}
+                    userLikes={(userLikes as number[]) || []}
                   />
                 ))}
               </div>
