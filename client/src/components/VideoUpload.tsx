@@ -15,8 +15,16 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { insertVideoSchema } from "@shared/schema";
+import { useAuth } from "@/hooks/useAuth";
 
-const videoUploadSchema = insertVideoSchema.extend({
+const videoUploadSchema = z.object({
+  title: z.string().min(1, "Título é obrigatório"),
+  description: z.string().optional(),
+  videoUrl: z.string().url("URL do vídeo deve ser válida"),
+  thumbnailUrl: z.string().url("URL da thumbnail deve ser válida").optional(),
+  telegramLink: z.string().url("Link do Telegram deve ser válido"),
+  country: z.string().optional(),
+  eventType: z.string().optional(),
   hashtags: z.string().optional(),
 });
 
@@ -26,6 +34,7 @@ export function VideoUpload() {
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user, isAuthenticated } = useAuth();
 
   const form = useForm<VideoUploadForm>({
     resolver: zodResolver(videoUploadSchema),
@@ -43,12 +52,13 @@ export function VideoUpload() {
 
   const uploadMutation = useMutation({
     mutationFn: async (data: VideoUploadForm) => {
-      const formData = new FormData();
-      Object.entries(data).forEach(([key, value]) => {
-        if (value) formData.append(key, value);
-      });
+      const videoData = {
+        ...data,
+        hashtags: data.hashtags ? data.hashtags.split(',').map(tag => tag.trim()) : [],
+        userId: user?.uid || 'anonymous'
+      };
       
-      await apiRequest("POST", "/api/videos", formData);
+      return await apiRequest("POST", "/api/videos", videoData);
     },
     onSuccess: () => {
       toast({

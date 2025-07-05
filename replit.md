@@ -120,11 +120,32 @@ PartyLink is a modern video social platform built with React and Express.js, des
 - **Sessions**: Persistent session storage
 - **Security**: HTTPS enforcement, secure cookies, CSRF protection
 
+## Deployment
+
+### Vercel Configuration
+- **vercel.json**: Configurado para deploy com Node.js 18
+- **Build Command**: `npm run build`
+- **Output Directory**: `dist`
+- **Framework**: Vite
+- **Environment Variables**: VITE_FIREBASE_API_KEY, VITE_FIREBASE_PROJECT_ID, VITE_FIREBASE_APP_ID
+
+### Firebase Setup
+- **Authentication**: Google OAuth configurado
+- **Authorized Domains**: localhost + domínio Vercel
+- **Environment**: Production-ready
+
+### Deploy Guide
+- **DEPLOY_VERCEL.md**: Guia completo passo a passo
+- **GitHub Integration**: Pronto para CI/CD automático
+- **Domínio Gratuito**: Opções Vercel (.vercel.app) ou Freenom
+
 ## Changelog
 
 ```
 Changelog:
-- July 05, 2025. Initial setup
+- July 05, 2025. Initial setup with Replit Auth
+- July 05, 2025. Migrated to Firebase Auth for better compatibility
+- July 05, 2025. Prepared for Vercel deployment with complete guide
 ```
 
 ## User Preferences
