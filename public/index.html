@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PartyLink - Conecte-se com as Melhores Festas</title>
+    <meta name="description" content="Descubra as melhores festas e eventos pelo mundo. Conecte-se via Telegram e viva experiências incríveis.">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="nav">
+                    <h1 class="logo">🎉 PartyLink</h1>
+                    <div class="nav-actions">
+                        <button id="theme-toggle" class="btn-icon" title="Alternar tema">
+                            🌙
+                        </button>
+                        <button id="auth-btn" class="btn-primary">
+                            Entrar com Google
+                        </button>
+                        <div id="user-menu" class="user-menu hidden">
+                            <img id="user-avatar" class="user-avatar" alt="Avatar">
+                            <span id="user-name">Usuário</span>
+                            <button id="logout-btn" class="btn-secondary">Sair</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Landing Page -->
+            <section id="landing" class="landing">
+                <div class="container">
+                    <div class="hero">
+                        <h2 class="hero-title">Conecte-se com as Melhores Festas do Mundo</h2>
+                        <p class="hero-subtitle">Descubra eventos incríveis, faça upload de seus vídeos de festa e conecte-se via Telegram</p>
+                        <button id="get-started-btn" class="btn-cta">Começar Agora</button>
+                    </div>
+                    
+                    <div class="features">
+                        <div class="feature">
+                            <div class="feature-icon">📱</div>
+                            <h3>Upload Direto</h3>
+                            <p>Faça upload de vídeos direto do seu dispositivo</p>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">🌍</div>
+                            <h3>Global</h3>
+                            <p>Festas de todo o mundo em um só lugar</p>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">💬</div>
+                            <h3>Telegram</h3>
+                            <p>Conecte-se diretamente via Telegram</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Home/Feed -->
+            <section id="home" class="home hidden">
+                <div class="container">
+                    <!-- Upload Button -->
+                    <div class="upload-section">
+                        <button id="upload-btn" class="btn-upload">
+                            📹 Fazer Upload de Vídeo
+                        </button>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="filters">
+                        <select id="country-filter" class="filter-select">
+                            <option value="">Todos os Países</option>
+                            <option value="USA">Estados Unidos</option>
+                            <option value="Brazil">Brasil</option>
+                            <option value="Germany">Alemanha</option>
+                            <option value="UK">Reino Unido</option>
+                            <option value="Spain">Espanha</option>
+                        </select>
+                        
+                        <select id="event-filter" class="filter-select">
+                            <option value="">Todos os Eventos</option>
+                            <option value="Beach Party">Festa na Praia</option>
+                            <option value="Techno Party">Festa Techno</option>
+                            <option value="Carnival">Carnaval</option>
+                            <option value="Club Night">Balada</option>
+                            <option value="Festival">Festival</option>
+                        </select>
+                    </div>
+
+                    <!-- Videos Grid -->
+                    <div id="videos-grid" class="videos-grid">
+                        <!-- Videos will be loaded here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Upload Modal -->
+        <div id="upload-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Fazer Upload de Vídeo</h3>
+                    <button id="close-modal" class="btn-close">×</button>
+                </div>
+                <form id="upload-form" class="upload-form">
+                    <div class="form-group">
+                        <label for="video-file">Vídeo *</label>
+                        <input type="file" id="video-file" accept="video/*" required>
+                        <small>Máximo 100MB</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="thumbnail-file">Thumbnail (opcional)</label>
+                        <input type="file" id="thumbnail-file" accept="image/*">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="video-title">Título *</label>
+                        <input type="text" id="video-title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="video-description">Descrição</label>
+                        <textarea id="video-description" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="telegram-link">Link do Telegram *</label>
+                        <input type="url" id="telegram-link" placeholder="https://t.me/seugrupo" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="video-country">País</label>
+                            <select id="video-country">
+                                <option value="">Selecione</option>
+                                <option value="USA">Estados Unidos</option>
+                                <option value="Brazil">Brasil</option>
+                                <option value="Germany">Alemanha</option>
+                                <option value="UK">Reino Unido</option>
+                                <option value="Spain">Espanha</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="event-type">Tipo de Evento</label>
+                            <select id="event-type">
+                                <option value="">Selecione</option>
+                                <option value="Beach Party">Festa na Praia</option>
+                                <option value="Techno Party">Festa Techno</option>
+                                <option value="Carnival">Carnaval</option>
+                                <option value="Club Night">Balada</option>
+                                <option value="Festival">Festival</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="hashtags">Hashtags</label>
+                        <input type="text" id="hashtags" placeholder="festa, música, diversão">
+                        <small>Separe por vírgulas</small>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" id="cancel-upload" class="btn-secondary">Cancelar</button>
+                        <button type="submit" class="btn-primary" id="submit-upload">
+                            <span class="upload-text">Fazer Upload</span>
+                            <span class="upload-loading hidden">Enviando...</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Video Player Modal -->
+        <div id="video-modal" class="modal hidden">
+            <div class="modal-content video-modal-content">
+                <button id="close-video" class="btn-close">×</button>
+                <video id="modal-video" controls>
+                    Seu navegador não suporta o elemento de vídeo.
+                </video>
+                <div class="video-info">
+                    <h3 id="video-title-display"></h3>
+                    <p id="video-description-display"></p>
+                    <div class="video-actions">
+                        <button id="like-video" class="btn-action">
+                            ❤️ <span id="likes-count">0</span>
+                        </button>
+                        <button id="telegram-link-btn" class="btn-telegram">
+                            💬 Telegram
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Carregando...</p>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div id="toast-container" class="toast-container"></div>
+    </div>
+
+    <script src="/app.js"></script>
+</body>
+</html>

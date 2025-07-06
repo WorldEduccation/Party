@@ -146,6 +146,7 @@ Changelog:
 - July 05, 2025. Initial setup with Replit Auth
 - July 05, 2025. Migrated to Firebase Auth for better compatibility
 - July 05, 2025. Prepared for Vercel deployment with complete guide
+- July 06, 2025. Complete rewrite to Node.js puro with device video upload
 ```
 
 ## User Preferences

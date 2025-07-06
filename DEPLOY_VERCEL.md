@@ -1,4 +1,4 @@
-# 📦 Guia Completo de Deploy do PartyLink no Vercel
+# 📦 Guia Completo de Deploy do PartyLink no Vercel (Node.js Puro)
 
 ## 🚀 Pré-requisitos
 
@@ -76,10 +76,11 @@
    ```
 
 4. **Configurações de Build**:
-   - Framework Preset: `Vite` 
-   - Build Command: `npm run build` (ou deixe em branco para usar o padrão)
-   - Output Directory: `dist`
-   - Install Command: `npm install` (ou deixe em branco)
+   - Framework Preset: `Other` ou `Node.js`
+   - Build Command: Deixe em branco
+   - Output Directory: Deixe em branco  
+   - Install Command: `npm install`
+   - Root Directory: `.` (raiz do projeto)
 
 5. **Deploy**:
    - Clique em `Deploy`
@@ -116,20 +117,30 @@
   "version": 2,
   "builds": [
     {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
+      "src": "server.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "handle": "filesystem"
+      "src": "/api/(.*)",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/uploads/(.*)",
+      "dest": "/server.js"
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/public/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/public/index.html"
     }
   ]
 }
@@ -185,12 +196,16 @@ Seu PartyLink estará disponível em:
 `https://seu-app.vercel.app`
 
 **Features funcionando**:
-✅ Autenticação Google via Firebase
-✅ Upload e visualização de vídeos
-✅ Sistema de filtros
-✅ Tema claro/escuro
-✅ Design responsivo
-✅ Integração Telegram
+✅ **Upload direto do dispositivo** - Vídeos até 100MB
+✅ **Node.js puro** - Sem frameworks, otimizado para Vercel
+✅ **Autenticação simulada** - Sistema de login funcional
+✅ **Upload e visualização de vídeos** - Player integrado
+✅ **Sistema de filtros** - Por país e tipo de evento
+✅ **Tema claro/escuro** - Alternância automática
+✅ **Design responsivo** - Mobile-first
+✅ **Integração Telegram** - Links diretos para grupos
+✅ **Sistema de likes** - Interação social
+✅ **Contador de visualizações** - Analytics básicas
 
 ## 💡 Próximos Passos
 
