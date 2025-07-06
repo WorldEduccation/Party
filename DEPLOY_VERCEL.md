@@ -76,10 +76,10 @@
    ```
 
 4. **Configurações de Build**:
-   - Framework Preset: `Vite`
-   - Build Command: `npm run build`
+   - Framework Preset: `Vite` 
+   - Build Command: `npm run build` (ou deixe em branco para usar o padrão)
    - Output Directory: `dist`
-   - Install Command: `npm install`
+   - Install Command: `npm install` (ou deixe em branco)
 
 5. **Deploy**:
    - Clique em `Deploy`
@@ -114,18 +114,18 @@
 ```json
 {
   "version": 2,
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "framework": "vite",
-  "functions": {
-    "server/index.ts": {
-      "runtime": "nodejs18.x"
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
     }
-  },
+  ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/server/index.ts"
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
@@ -144,17 +144,40 @@
 
 ## 🛠️ Solução de Problemas
 
+### ❌ "Os tempos de execução de função devem ter uma versão válida"
+**Solução 1**: O arquivo `vercel.json` foi corrigido com configuração estática.
+
+**Solução 2**: Se ainda der erro, use a versão ultra-simples:
+1. Renomeie `vercel.json` para `vercel-backup.json`
+2. Renomeie `vercel-alternative.json` para `vercel.json`
+3. Faça novo deploy
+
+**Conteúdo da versão simples**:
+```json
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+```
+
 ### Erro de Build
 - Verifique se todas as environment variables estão configuradas
 - Confirme que o Firebase está configurado corretamente
+- Use o comando de build: `npm run build`
 
 ### Erro de Authentication
 - Verifique se o domínio está nos "Authorized domains" do Firebase
 - Confirme as environment variables do Firebase
+- Teste localmente primeiro
 
 ### Erro 404 nas Rotas
 - Verifique se o `vercel.json` está configurado corretamente
 - Confirme se as rotas estão funcionando localmente
+- Use `"handle": "filesystem"` para assets estáticos
 
 ## 🎉 Pronto!
 
